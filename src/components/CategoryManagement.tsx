@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Category } from '../types/scrape';
-import { Plus, Trash2, Edit2, X } from 'lucide-react';
+import { Plus, Trash2, CreditCard as Edit2, X } from 'lucide-react';
 import { mockCategories } from '../data/mockData';
 
 export default function CategoryManagement() {
