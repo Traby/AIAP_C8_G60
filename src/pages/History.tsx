@@ -33,12 +33,18 @@ export default function History() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <p className="text-sm text-blue-600 break-all line-clamp-1">{result.url}</p>
 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Calendar className="w-4 h-4" />
                   {result.date}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                    {result.category}
+                  </span>
                 </div>
               </div>
 
@@ -77,9 +83,17 @@ export default function History() {
                 <p className="text-blue-600 break-all">{selectedResult.url}</p>
               </div>
 
-              <div>
-                <p className="text-sm font-medium text-gray-500 mb-1">{t('date_scraped')}</p>
-                <p className="text-gray-900">{selectedResult.date}</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">{t('date_scraped')}</p>
+                  <p className="text-gray-900">{selectedResult.date}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">{t('category')}</p>
+                  <p className="inline-block px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                    {selectedResult.category}
+                  </p>
+                </div>
               </div>
 
               <div>

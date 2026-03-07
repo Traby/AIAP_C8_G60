@@ -1,5 +1,6 @@
 import { useLanguage, Language } from '../contexts/LanguageContext';
 import { useTheme, Theme } from '../contexts/ThemeContext';
+import CategoryManagement from '../components/CategoryManagement';
 import { Globe, Palette } from 'lucide-react';
 
 export default function Settings() {
@@ -110,6 +111,8 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      <CategoryManagement />
     </div>
   );
 }

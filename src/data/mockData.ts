@@ -1,4 +1,14 @@
-import { ScrapeResult } from '../types/scrape';
+import { ScrapeResult, Category } from '../types/scrape';
+
+export const mockCategories: Category[] = [
+  { id: '1', name: 'Work' },
+  { id: '2', name: 'Personal' },
+  { id: '3', name: 'Research' },
+  { id: '4', name: 'Learning' },
+  { id: '5', name: 'Projects' }
+];
+
+const categories = ['Work', 'Personal', 'Research', 'Learning', 'Projects'];
 
 export const mockResults: ScrapeResult[] = [
   {
@@ -6,6 +16,7 @@ export const mockResults: ScrapeResult[] = [
     url: 'https://example.com',
     title: 'Example Company',
     date: '2026-03-05',
+    category: categories[Math.floor(Math.random() * categories.length)],
     summary: 'This website introduces a company and describes its services and contact information.',
     headings: [
       'Welcome to Example Company',
@@ -23,6 +34,7 @@ export const mockResults: ScrapeResult[] = [
     url: 'https://techstartup.io',
     title: 'Tech Startup Solutions',
     date: '2026-03-04',
+    category: categories[Math.floor(Math.random() * categories.length)],
     summary: 'A modern technology startup offering innovative software solutions for businesses.',
     headings: [
       'Innovative Solutions',
@@ -42,6 +54,7 @@ export const mockResults: ScrapeResult[] = [
     url: 'https://designstudio.com',
     title: 'Creative Design Studio',
     date: '2026-03-03',
+    category: categories[Math.floor(Math.random() * categories.length)],
     summary: 'Award-winning design studio specializing in branding and digital experiences.',
     headings: [
       'Our Portfolio',
@@ -61,6 +74,7 @@ export const mockResults: ScrapeResult[] = [
     url: 'https://healthwellness.org',
     title: 'Health & Wellness Center',
     date: '2026-03-02',
+    category: categories[Math.floor(Math.random() * categories.length)],
     summary: 'Comprehensive health and wellness services focusing on preventive care and holistic healing.',
     headings: [
       'Our Approach',
@@ -80,6 +94,7 @@ export const mockResults: ScrapeResult[] = [
     url: 'https://edulearn.edu',
     title: 'EduLearn Online Platform',
     date: '2026-03-01',
+    category: categories[Math.floor(Math.random() * categories.length)],
     summary: 'Online learning platform offering courses in technology, business, and creative arts.',
     headings: [
       'Course Catalog',
