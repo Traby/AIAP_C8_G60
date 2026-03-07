@@ -21,26 +21,37 @@ export default function Dashboard() {
     setError(null);
 
     try {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        throw new Error("Supabase environment variables missing");
+      }
+
       const apiUrl = `${SUPABASE_URL}/functions/v1/research`;
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      console.log("API RESPONSE:", text);
+
+      if (!text) {
+        throw new Error("Empty response from API");
+      }
+
+      const data = JSON.parse(text);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Research failed');
+        throw new Error(data.error || "Research failed");
       }
 
       setResult(data);
     } catch (err: any) {
-      console.error('Research error:', err);
-      setError(err.message || 'Failed to complete research. Please try again.');
+      console.error("Research error:", err);
+      setError(err.message || "Failed to complete research. Please try again.");
     } finally {
       setIsLoading(false);
     }
