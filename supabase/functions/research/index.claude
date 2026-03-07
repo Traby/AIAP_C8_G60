@@ -41,9 +41,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const firecrawlApiKey = Deno.env.get("FIRECRAWL_API_KEY");
-    const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
+    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
 
-    if (!firecrawlApiKey || !openaiApiKey) {
+    if (!firecrawlApiKey || !anthropicApiKey) {
       return new Response(
         JSON.stringify({ error: "API keys not configured" }),
         {
@@ -64,7 +64,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query,
+        query: query,
         limit: 6,
         scrapeOptions: {
           formats: ["markdown"],
@@ -110,32 +110,30 @@ Deno.serve(async (req: Request) => {
     }));
 
     const combinedContent = sources
-      .map(
-        (src, i) =>
-          `\n\n--- SOURCE ${i + 1}: ${src.title} ---\nURL: ${src.url}\n\n${src.content?.slice(0, 6000) || ""}`
+      .map((src, i) =>
+        `\n\n--- SOURCE ${i + 1}: ${src.title} ---\nURL: ${src.url}\n\n${src.content?.slice(0, 6000) || ""}`
       )
       .join("");
 
-    console.log("Step 3: OpenAI synthesizing briefing...");
-    const openaiResponse = await fetch("https://api.openai.com/v1/responses", {
+    console.log("Step 3: Claude synthesizing briefing...");
+    const claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${openaiApiKey}`,
+        "x-api-key": anthropicApiKey,
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-5-mini",
-        input: [
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1500,
+        messages: [
           {
             role: "user",
-            content: [
-              {
-                type: "input_text",
-                text: `You are an expert research analyst. Based on the scraped content from multiple websites below, write a concise, professional 1-page research briefing that answers the following question:
+            content: `You are an expert research analyst. Based on the scraped content from multiple websites below, write a concise, professional 1-page research briefing that answers the following question:
 
-Research Question: ${query}
+**Research Question:** ${query}
 
-Instructions:
+**Instructions:**
 - Start with an Executive Summary (2–3 sentences, the key answer)
 - Then Key Findings (4–6 bullet points, the most important insights)
 - Then Implications (2–3 sentences on what this means practically)
@@ -144,35 +142,34 @@ Instructions:
 - Format using markdown headers (## for sections)
 - Total length: ~400–600 words
 
-Scraped Source Content:
+**Scraped Source Content:**
 ${combinedContent}
 
 Write the briefing now:`,
-              },
-            ],
           },
         ],
-        max_output_tokens: 1500,
       }),
     });
 
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text();
-      console.error("OpenAI API error:", errorText);
-      return new Response(
-        JSON.stringify({ error: `OpenAI API error: ${errorText}` }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    if (!claudeResponse.ok) {
+  const errorText = await claudeResponse.text();
+  console.error("Claude API error:", errorText);
+  return new Response(
+    JSON.stringify({ error: `Claude API error: ${errorText}` }),
+    {
+      status: 500,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
     }
+  );
+}
 
-    const openaiData = await openaiResponse.json();
-    const briefing = openaiData.output_text || "";
+    const claudeData = await claudeResponse.json();
+    const briefing = claudeData.content?.[0]?.type === "text"
+      ? claudeData.content[0].text
+      : "";
 
     return new Response(
       JSON.stringify({
