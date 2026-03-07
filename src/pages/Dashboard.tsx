@@ -27,13 +27,13 @@ export default function Dashboard() {
 
       const apiUrl = `${SUPABASE_URL}/functions/v1/research`;
       const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				apikey: SUPABASE_ANON_KEY,
+				},
+			body: JSON.stringify({ query }),
+			});
 
       const text = await response.text();
       console.log("API RESPONSE:", text);
